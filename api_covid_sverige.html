@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Covid-19</title>
+    <script src="jquery-3.5.1.min.js"></script>
+  </head>
+  <body>
+  <h1>Antal Covid-19 fall i Sveriges regioner</h1>
+
+  Region:<br>
+  <input type="text" id="id_search_region" size="20" maxlength="20" placeholder="Börja sökning med versal"></td>
+
+  <div id="nr_matches"></div>
+  <div id="search_results"></div>
+
+  <script>
+  var delayTimer;
+  $('#id_search_region').keyup(function() {
+    clearTimeout(delayTimer);
+    $('#nr_matches').empty();
+    $('#search_results').empty();
+    delayTimer = setTimeout(function() {
+      var searchstring = $('#id_search_region').val();
+      //$('#search_results').remove();
+      $.ajax({
+        url: 'https://api.apify.com/v2/key-value-stores/8mRFdwyukavRNCr42/records/LATEST?disableRedirect=true',
+        dataType: 'json',
+      }).then(function(data) {
+        var results = '';
+        var count = 0;
+        data['infectedByRegion'].forEach(function(region) {
+            var reg = region['region'];
+            if ( reg.match(searchstring) && searchstring !== '') {
+              results += '<h3>' + region['region'] + '</h3>';
+              results += 'Antal infekterade: ' + region['infectedCount'] + '<br>';
+              results += 'Antal döda: ' + region['deathCount'] + '<br>';
+              results += 'Antal intensivvårdade: ' + region['intensiveCareCount'];
+              count = count + 1;
+            }
+        }),
+        count = count;
+        if ( count !== 0) {
+          count = 'Antal träffar: <strong>' + (count) + '</strong>';
+          $('#nr_matches').append(count);
+        }
+        $('#search_results').append(results);
+      });
+    }, 500);
+  });
+  </script>
+
+  </body>
+</html>

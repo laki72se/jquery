@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Covid-19</title>
+    <script src="jquery-3.5.1.min.js"></script>
+  </head>
+  <body>
+  <h1>Antal Covid-19 fall i de olika länderna</h1>
+
+  Land:<br>
+  <input type="text" id="id_search_api" size="20" maxlength="20" placeholder="Börja sökning med versal"></td>
+
+  <div id="nr_matches"></div>
+  <div id="search_results"></div>
+
+  <script>
+  var delayTimer;
+  $('#id_search_api').keyup(function() {
+     clearTimeout(delayTimer);
+     // Ta bort tidigare antal träffar och sökresultat
+     $('#nr_matches').empty();
+     $('#search_results').empty();
+     delayTimer = setTimeout(function() {
+     var searchstring = $('#id_search_api').val();
+
+      $.ajax({
+        url: 'https://api.apify.com/v2/key-value-stores/tVaYRsPHLjNdNBu7S/records/LATEST?disableRedirect=true',
+        dataType: 'json',
+      }).then(function(data) {
+        var results = '';
+        var count = 0;
+        data.forEach(function(api) {
+            var country = api['country'];
+            if (country.match(searchstring) && searchstring !== '') {
+              results += '<h3>' + api['country'] + '</h3>';
+              results += 'Antal infekterade: ' + api['infected'] + '<br>';
+              results += 'Antal testade: ' + api['tested'] + '<br>';
+              results += 'Antal friskförklarade: ' + api['recovered'] + '<br>';
+              results += 'Antal döda: ' + api['deceased'] + '<br>';
+              count = count + 1;
+            }
+        }),
+        count = count;  // Vet inte varför detta behöver sättas
+        if ( count !== 0) {
+          // Visa texten Antal träffar bara om det är några träffar
+          count = 'Antal träffar: <strong>' + (count) + '</strong>';
+          $('#nr_matches').append(count);
+        }
+        $('#search_results').append(results);
+      });
+    }, 500);    // Tid i ms från keyup till sökning görs
+  });
+  </script>
+
+  </body>
+</html>
