@@ -28,7 +28,7 @@
     delayTimer = setTimeout(function() {
       var temp_f = $('#temp_farenheit').val();
       var temp_c = (temp_f-32)/1.8;
-      temp_c = Math.round(temp_c).toFixed(2);
+      temp_c = temp_c.toFixed(2);
 
       if ( $('#temp_farenheit').val() ) {
         $('#temp_celsius').val(temp_c);
@@ -42,7 +42,7 @@
     delayTimer = setTimeout(function() {
       var temp_c = $('#temp_celsius').val();
       var temp_f = temp_c*(9/5)+32;
-      temp_f = Math.round(temp_f).toFixed(2);
+      temp_f = temp_f.toFixed(2);
 
       if ( $('#temp_celsius').val() ) {
         $('#temp_farenheit').val(temp_f);
